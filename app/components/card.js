@@ -1,13 +1,7 @@
-'use client';
-import { useEffect } from 'react';
+import react from 'react';
 import Image from 'next/image';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Card() {
-  useEffect(() => {
-    import('bootstrap/dist/js/bootstrap.bundle.min.js');
-  }, []);
-
   return (
     <div className="container my-4">
       <div className="row g-3">
