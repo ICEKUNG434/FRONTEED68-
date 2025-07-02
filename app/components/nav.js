@@ -25,7 +25,7 @@ export default function Navigation() {
               <Link className="nav-link active" aria-current="page" href="/">Home</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" href="/about">Link</Link>
+              <Link className="nav-link" href="/contact">Contact</Link> {/* <-- ลิงก์ไป /contact */}
             </li>
             <li className="nav-item dropdown">
               <a
@@ -63,3 +63,4 @@ export default function Navigation() {
     </nav>
   );
 }
+
