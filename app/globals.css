@@ -1,5 +1,93 @@
 @import "tailwindcss";
 
+/* ฟอนต์พื้นฐาน */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Orbitron', sans-serif;
+  background-color: #121212;
+  color: white;
+  min-height: 100vh;
+
+  /* พื้นหลังหลัก */
+  background-image:
+    url('/rhodes-fallback.png'), /* โลโก้จางๆ */
+    linear-gradient(0deg, rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px),
+    radial-gradient(circle at 30% 40%, rgba(0,188,212,0.05), transparent 50%);
+
+  background-size:
+    400px,
+    40px 40px,
+    40px 40px,
+    100% 100%;
+
+  background-position:
+    center center,
+    top left,
+    top left,
+    center center;
+
+  background-repeat: no-repeat, repeat, repeat, no-repeat;
+
+  animation: backgroundFade 20s infinite alternate;
+}
+
+/* เอฟเฟกต์เคลื่อนไหวจางๆ เหมือน UI อนิเมะ */
+@keyframes backgroundFade {
+  0% {
+    background-position:
+      center center,
+      0 0,
+      0 0,
+      center center;
+  }
+  100% {
+    background-position:
+      center center,
+      40px 40px,
+      -40px -40px,
+      center center;
+  }
+}
+
+/* ให้เนื้อหาเว็บเลื่อนนุ่มนวล */
+html {
+  scroll-behavior: smooth;
+}
+
+/* สำหรับข้อความหรือปุ่มในธีม */
+h1, h2, h3, .display-4 {
+  font-family: 'Orbitron', sans-serif;
+  color: #00bcd4;
+  text-shadow: 0 0 8px rgba(0, 188, 212, 0.4);
+}
+
+a {
+  color: #00bcd4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ปุ่ม */
+.btn-arknights {
+  background-color: #00bcd4;
+  color: black;
+  border: none;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-arknights:hover {
+  background-color: #00acc1;
+  box-shadow: 0 0 15px rgba(0, 188, 212, 0.6);
+}
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
