@@ -24,50 +24,61 @@ export default function RegisterPage() {
     }))
   }
 
+  const convertToThaiDate = (dateStr) => {
+    if (!dateStr) return ''
+    const date = new Date(dateStr)
+    const day = String(date.getDate()).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const year = date.getFullYear() + 543
+    return `${day}/${month}/${year}`
+  }
+
   const handleSubmit = async (e) => {
-  e.preventDefault()
+    e.preventDefault()
 
-  if (!form.accept) {
-    Swal.fire('กรุณายอมรับเงื่อนไข', '', 'warning')
-    return
-  }
-
-  try {
-    const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: `${form.prefix} ${form.firstname} ${form.lastname}`,
-        email: form.username,
-        password: form.password,
-        address: form.address,
-        gender: form.gender,
-        birthdate: form.birthdate,
-      }),
-    })
-
-    const data = await res.json()
-
-    if (res.ok) {
-      Swal.fire('สมัครสมาชิกสำเร็จ', 'คุณสามารถเข้าสู่ระบบได้แล้ว', 'success')
-      setForm({
-        username: '',
-        password: '',
-        prefix: '',
-        firstname: '',
-        lastname: '',
-        address: '',
-        gender: '',
-        birthdate: '',
-        accept: false,
-      })
-    } else {
-      Swal.fire('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถสมัครสมาชิกได้', 'error')
+    if (!form.accept) {
+      Swal.fire('กรุณายอมรับเงื่อนไข', '', 'warning')
+      return
     }
-  } catch (err) {
-    Swal.fire('ข้อผิดพลาดเครือข่าย', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error')
+
+    try {
+      const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstname: form.prefix,
+          fullname: form.firstname,
+          lastname: form.lastname,
+          username: form.username,
+          password: form.password,
+          address: form.address,
+          sex: form.gender,
+          birthday: convertToThaiDate(form.birthdate),
+        }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        Swal.fire('สมัครสมาชิกสำเร็จ', 'คุณสามารถเข้าสู่ระบบได้แล้ว', 'success')
+        setForm({
+          username: '',
+          password: '',
+          prefix: '',
+          firstname: '',
+          lastname: '',
+          address: '',
+          gender: '',
+          birthdate: '',
+          accept: false,
+        })
+      } else {
+        Swal.fire('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถสมัครสมาชิกได้', 'error')
+      }
+    } catch (err) {
+      Swal.fire('ข้อผิดพลาดเครือข่าย', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error')
+    }
   }
-}
 
   return (
     <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light p-3">
@@ -88,9 +99,9 @@ export default function RegisterPage() {
             <label htmlFor="prefix" className="form-label">คำนำหน้าชื่อ</label>
             <select className="form-select" id="prefix" name="prefix" value={form.prefix} onChange={handleChange}>
               <option value="">-- เลือก --</option>
-              <option value="นาย">นาย</option>
-              <option value="นาง">นาง</option>
-              <option value="นางสาว">นางสาว</option>
+              <option value="Mr">นาย</option>
+              <option value="Mrs">นาง</option>
+              <option value="Miss">นางสาว</option>
             </select>
           </div>
 
