@@ -29,7 +29,7 @@ export default function Page() {
     <div className="container mt-5">
       <div className="card shadow-lg">
         <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-          <h5 className="mb-0"><i className="bi bi-people-fill me-2"></i>รายชื่อสมาชิก</h5>
+          <h5 className="mb-0"><i className="bi bi-people-fill me-2"></i> รายชื่อสมาชิก</h5>
           <Link href="/admin/users/create" className="btn btn-light btn-sm">
             <i className="bi bi-person-plus"></i> เพิ่มสมาชิก
           </Link>
@@ -40,35 +40,46 @@ export default function Page() {
               <thead className="table-light text-center">
                 <tr>
                   <th style={{ width: '5%' }}>#</th>
-                  <th style={{ width: '15%' }}>คำนำหน้า</th>
-                  <th style={{ width: '25%' }}>ชื่อ</th>
-                  <th style={{ width: '25%' }}>นามสกุล</th>
-                  <th style={{ width: '15%' }}>แก้ไข</th>
-                  <th style={{ width: '15%' }}>ลบ</th>
+                  <th style={{ width: '10%' }}>คำนำหน้า</th>
+                  <th style={{ width: '15%' }}>ชื่อ</th>
+                  <th style={{ width: '15%' }}>นามสกุล</th>
+                  <th style={{ width: '20%' }}>Username</th>
+                  <th style={{ width: '15%' }}>ที่อยู่</th>
+                  <th style={{ width: '10%' }}>เพศ</th>
+                  <th style={{ width: '10%' }}>วันเกิด</th>
+                  <th style={{ width: '10%' }}>แก้ไข</th>
+                  <th style={{ width: '10%' }}>ลบ</th>
                 </tr>
               </thead>
               <tbody>
-                {items.map((item) => (
-                  <tr key={item.id}>
-                    <td className="text-center">{item.id}</td>
-                    <td>{item.firstname}</td>
-                    <td>{item.fullname}</td>
-                    <td>{item.lastname}</td>
-                    <td className="text-center">
-                      <Link href={`/admin/users/edit/${item.id}`} className="btn btn-warning btn-sm">
-                        <i className="bi bi-pencil-square"></i> แก้ไข
-                      </Link>
-                    </td>
-                    <td className="text-center">
-                      <button className="btn btn-danger btn-sm" type="button">
-                        <i className="bi bi-trash"></i> ลบ
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                {items.length === 0 && (
+                {items.length > 0 ? (
+                  items.map((item) => (
+                    <tr key={item.id}>
+                      <td className="text-center">{item.id}</td>
+                      <td>{item.firstname}</td>
+                      <td>{item.fullname}</td>
+                      <td>{item.lastname}</td>
+                      <td>{item.username}</td>
+                      <td>{item.address}</td>
+                      <td>{item.sex}</td>
+                      <td>{item.birthday}</td>
+                      <td className="text-center">
+                        <Link href={`/admin/users/edit/${item.id}`} className="btn btn-warning btn-sm">
+                          <i className="bi bi-pencil-square"></i> แก้ไข
+                        </Link>
+                      </td>
+                      <td className="text-center">
+                        <button className="btn btn-danger btn-sm" type="button">
+                          <i className="bi bi-trash"></i> ลบ
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
                   <tr>
-                    <td colSpan="6" className="text-center text-muted">ไม่มีข้อมูล</td>
+                    <td colSpan="10" className="text-center text-muted">
+                      ไม่มีข้อมูลสมาชิก
+                    </td>
                   </tr>
                 )}
               </tbody>
