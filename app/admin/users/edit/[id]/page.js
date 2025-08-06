@@ -2,8 +2,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
-
 export default function Page({ params }) {
   const router = useRouter();
   const [resolvedParams, setResolvedParams] = useState(null);
@@ -42,7 +40,7 @@ export default function Page({ params }) {
     const getUser = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE}/api/users/${id}`);
+        const res = await fetch('/api/users'); // เรียกผ่าน Next.js API
         if (!res.ok) {
           const status = res.status;
           const statusText = res.statusText;
@@ -111,103 +109,100 @@ export default function Page({ params }) {
     return { status, statusText, headersObj, textBody, jsonBody };
   };
 
-  const handleUpdateSubmit = async (e) => {
-    e.preventDefault();
-    if (!resolvedParams) { alert('ไม่พบ id'); return; }
-    const { id } = resolvedParams;
-    setSubmitting(true);
+const handleUpdateSubmit = async (e) => {
+  e.preventDefault();
+  if (!resolvedParams) { alert('ไม่พบ id'); return; }
+  const { id } = resolvedParams;
+  setSubmitting(true);
 
-    const payload = { ...form };
-    console.log('[DEBUG] prepared payload', payload);
+  const payload = { ...form };
+  console.log('[DEBUG] prepared payload', payload);
 
-    const tries = [
-      {
-        label: `PUT ${API_BASE}/api/users/${id} (JSON)`,
-        fetchOpts: {
-          url: `${API_BASE}/api/users/${id}`,
-          init: {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify(payload),
-          }
-        }
-      },
-      {
-        label: `PUT ${API_BASE}/api/users (JSON with id)`,
-        fetchOpts: {
-          url: `${API_BASE}/api/users`,
-          init: {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify({ id, ...payload }),
-          }
-        }
-      },
-      {
-        label: `POST ${API_BASE}/api/users (with _method=PUT form-urlencoded)`,
-        fetchOpts: {
-          url: `${API_BASE}/api/users`,
-          init: {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ _method: 'PUT', id, ...payload }).toString()
-          }
-        }
-      },
-      {
-        label: `POST ${API_BASE}/api/users/${id} (with _method=PUT form-urlencoded)`,
-        fetchOpts: {
-          url: `${API_BASE}/api/users/${id}`,
-          init: {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ _method: 'PUT', ...payload }).toString()
-          }
+  const tries = [
+    {
+      label: `PUT /api/users/${id} (JSON)`,
+      fetchOpts: {
+        url: `http://itdev.cmtc.ac.th:3000/api/users/${id}`,
+        init: {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
         }
       }
-    ];
-
-    const headersToObject2 = (headers) => {
-      const obj = {};
-      try { for (const [k, v] of headers.entries()) obj[k] = v } catch (e) {}
-      return obj;
-    };
-
-    const debugPrintResponse2 = async (label, res) => {
-      let text = '<no body>';
-      try { text = await res.text(); } catch (e) { text = `<err reading body: ${e.message}>`; }
-      let json = null;
-      try { json = text ? JSON.parse(text) : null; } catch (e) { json = null; }
-      console.log(`[DEBUG] ${label} => status: ${res.status} ${res.statusText}`, {
-        headers: headersToObject2(res.headers), text, json
-      });
-      return { ok: res.ok, status: res.status, text, json };
-    };
-
-    let success = false;
-    for (const t of tries) {
-      try {
-        console.log('[DEBUG] Trying', t.label, t.fetchOpts);
-        const res = await fetch(t.fetchOpts.url, t.fetchOpts.init);
-        // use detailed debug logger
-        const info = await debugPrintResponse2(t.label, res);
-        if (info.ok) {
-          success = true;
-          alert('✅ อัปเดตสำเร็จ: ' + t.label);
-          // optionally navigate back or refresh
-          // router.push('/admin/users');
-          break;
-        } else {
-          console.error('Update failed (' + t.label + ')', { status: info.status, text: info.text, json: info.json });
+    },
+    {
+      label: `PUT /api/users (JSON with id)`,
+      fetchOpts: {
+        url: `http://itdev.cmtc.ac.th:3000/api/users`,
+        init: {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ id, ...payload }),
         }
-      } catch (err) {
-        console.error('Network error on try ' + t.label, err);
+      }
+    },
+    {
+      label: `POST /api/users (with _method=PUT form-urlencoded)`,
+      fetchOpts: {
+        url: `http://itdev.cmtc.ac.th:3000/api/users`,
+        init: {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ _method: 'PUT', id, ...payload }).toString()
+        }
+      }
+    },
+    {
+      label: `POST /api/users/${id} (with _method=PUT form-urlencoded)`,
+      fetchOpts: {
+        url: `http://itdev.cmtc.ac.th:3000/api/users/${id}`,
+        init: {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ _method: 'PUT', ...payload }).toString()
+        }
       }
     }
+  ];
 
-    if (!success) alert('❌ อัปเดตไม่สำเร็จ — ดู console/Network tab เพื่อรายละเอียด');
-    setSubmitting(false);
+  const headersToObject = (headers) => {
+    const obj = {};
+    try { for (const [k, v] of headers.entries()) obj[k] = v } catch (e) {}
+    return obj;
   };
+
+  const debugPrintResponse = async (label, res) => {
+    let text = '<no body>';
+    try { text = await res.text(); } catch (e) { text = `<err reading body: ${e.message}>`; }
+    let json = null;
+    try { json = text ? JSON.parse(text) : null; } catch (e) { json = null; }
+    console.log(`[DEBUG] ${label} => status: ${res.status} ${res.statusText}`, {
+      headers: headersToObject(res.headers), text, json
+    });
+    return { ok: res.ok, status: res.status, text, json };
+  };
+
+  let success = false;
+  for (const t of tries) {
+    try {
+      console.log('[DEBUG] Trying', t.label, t.fetchOpts);
+      const res = await fetch(t.fetchOpts.url, t.fetchOpts.init);
+      const info = await debugPrintResponse(t.label, res);
+      if (info.ok) {
+        success = true;
+        alert('✅ อัปเดตสำเร็จ: ' + t.label);
+        break;
+      } else {
+        console.error('Update failed (' + t.label + ')', { status: info.status, text: info.text });
+      }
+    } catch (err) {
+      console.error('Network error on try ' + t.label, err);
+    }
+  }
+
+  if (!success) alert('❌ อัปเดตไม่สำเร็จ — ดู console/Network tab เพื่อรายละเอียด');
+  setSubmitting(false);
+};
 
 
   return (

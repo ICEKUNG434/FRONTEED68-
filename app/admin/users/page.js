@@ -3,8 +3,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
-
 export default function Page() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +13,7 @@ export default function Page() {
 
     async function getUsers() {
       try {
-        const res = await fetch(`${API_BASE}/api/users`);
+        const res = await fetch('/api/users');
         if (!res.ok) {
           console.error('Failed to fetch data', res.status, res.statusText);
           return;
@@ -30,8 +28,7 @@ export default function Page() {
     }
 
     getUsers();
-    // ลดความถี่เป็น 10s แทน 3s (3s อาจหนักถ้าผู้ใช้เยอะ)
-    const interval = setInterval(getUsers, 10000);
+    const interval = setInterval(getUsers, 3000);
     return () => {
       mounted = false;
       clearInterval(interval);
@@ -54,13 +51,17 @@ export default function Page() {
     setDeletingId(id);
 
     try {
-      const res = await fetch(`${API_BASE}/api/users/${id}`, {
+      const res = await fetch(`http://itdev.cmtc.ac.th:3000/api/users/${id}`, {
         method: 'DELETE',
         headers: { Accept: 'application/json' },
       });
 
       let body;
-      try { body = await res.json(); } catch { body = null; }
+      try {
+        body = await res.json();
+      } catch {
+        body = null;
+      }
 
       if (!res.ok) {
         console.error('Delete failed', body);
