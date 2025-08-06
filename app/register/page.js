@@ -14,10 +14,8 @@ export default function Register() {
   })
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e) => {
@@ -30,9 +28,17 @@ export default function Register() {
         },
         body: JSON.stringify(form)
       })
+      if (!res.ok) {
+        const text = await res.text()
+        console.error('Register failed:', text)
+        alert('❌ สมัครไม่สำเร็จ')
+        return
+      }
       const data = await res.json()
       alert('✅ สมัครสมาชิกสำเร็จ')
       console.log('Response:', data)
+      // ถ้าต้องการ reset form ให้เปิดคอมเมนต์ด้านล่าง
+      // setForm({ firstname: '', fullname: '', lastname: '', username: '', password: '', address: '', sex: '', birthday: '' })
     } catch (error) {
       console.error('Error:', error)
       alert('❌ เกิดข้อผิดพลาด')
@@ -48,41 +54,130 @@ export default function Register() {
         <div className="card-body">
           <form onSubmit={handleSubmit} className="row g-3">
             <div className="col-md-4">
-              <label className="form-label">คำนำหน้า</label>
-              <input type="text" className="form-control" name="firstname" value={form.firstname} onChange={handleChange} required />
+              <label htmlFor="firstname" className="form-label">คำนำหน้า</label>
+              <select
+                id="firstname"
+                name="firstname"
+                className="form-select"
+                value={form.firstname}
+                onChange={handleChange}
+                required
+              >
+                <option value="">-- เลือกคำนำหน้า --</option>
+                <option value="นาย">นาย</option>
+                <option value="นาง">นาง</option>
+                <option value="นางสาว">นางสาว</option>
+              </select>
             </div>
+
             <div className="col-md-4">
-              <label className="form-label">ชื่อ</label>
-              <input type="text" className="form-control" name="fullname" value={form.fullname} onChange={handleChange} required />
+              <label htmlFor="fullname" className="form-label">ชื่อ</label>
+              <div className="input-group">
+                <span className="input-group-text" id="addon-fullname"><i className="bi bi-person"></i></span>
+                <input
+                  id="fullname"
+                  name="fullname"
+                  type="text"
+                  className="form-control"
+                  value={form.fullname}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
+
             <div className="col-md-4">
-              <label className="form-label">นามสกุล</label>
-              <input type="text" className="form-control" name="lastname" value={form.lastname} onChange={handleChange} required />
+              <label htmlFor="lastname" className="form-label">นามสกุล</label>
+              <div className="input-group">
+                <span className="input-group-text" id="addon-lastname"><i className="bi bi-person-badge"></i></span>
+                <input
+                  id="lastname"
+                  name="lastname"
+                  type="text"
+                  className="form-control"
+                  value={form.lastname}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
+
             <div className="col-md-6">
-              <label className="form-label">Username</label>
-              <input type="text" className="form-control" name="username" value={form.username} onChange={handleChange} required />
+              <label htmlFor="username" className="form-label">Username</label>
+              <div className="input-group">
+                <span className="input-group-text" id="addon-username"><i className="bi bi-person-circle"></i></span>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  className="form-control"
+                  value={form.username}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
+
             <div className="col-md-6">
-              <label className="form-label">Password</label>
-              <input type="password" className="form-control" name="password" value={form.password} onChange={handleChange} required />
+              <label htmlFor="password" className="form-label">Password</label>
+              <div className="input-group">
+                <span className="input-group-text" id="addon-password"><i className="bi bi-lock"></i></span>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  className="form-control"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
+
             <div className="col-md-8">
-              <label className="form-label">ที่อยู่</label>
-              <input type="text" className="form-control" name="address" value={form.address} onChange={handleChange} required />
+              <label htmlFor="address" className="form-label">ที่อยู่</label>
+              <input
+                id="address"
+                name="address"
+                type="text"
+                className="form-control"
+                value={form.address}
+                onChange={handleChange}
+              />
             </div>
+
             <div className="col-md-4">
-              <label className="form-label">เพศ</label>
-              <select className="form-select" name="sex" value={form.sex} onChange={handleChange} required>
+              <label htmlFor="sex" className="form-label">เพศ</label>
+              <select
+                id="sex"
+                name="sex"
+                className="form-select"
+                value={form.sex}
+                onChange={handleChange}
+                required
+              >
                 <option value="">-- เลือกเพศ --</option>
                 <option value="ชาย">ชาย</option>
                 <option value="หญิง">หญิง</option>
               </select>
             </div>
+
             <div className="col-md-4">
-              <label className="form-label">วันเกิด (เช่น 14/02/2545)</label>
-              <input type="text" className="form-control" name="birthday" value={form.birthday} onChange={handleChange} required />
+              <label htmlFor="birthday" className="form-label">วันเกิด</label>
+              <div className="input-group">
+                <span className="input-group-text" id="addon-birthday"><i className="bi bi-calendar-event"></i></span>
+                <input
+                  id="birthday"
+                  name="birthday"
+                  type="text"
+                  placeholder="เช่น 14/02/2545"
+                  className="form-control"
+                  value={form.birthday}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
+
             <div className="col-12 text-end">
               <button type="submit" className="btn btn-success">
                 <i className="bi bi-person-plus"></i> สมัครสมาชิก

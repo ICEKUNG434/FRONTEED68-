@@ -1,6 +1,6 @@
 'use client';
 import Carousel from "./components/carousel";
-import Card from "./components/card";
+import Card from "./components/card"; // ชื่อเป็นตัวพิมพ์ใหญ่
 
 export default function Home() {
   return (
@@ -34,7 +34,7 @@ export default function Home() {
         <Carousel />
       </div>
 
-      {/* Card Section */}
+      {/* Card section */}
       <div className="container">
         <Card />
       </div>
