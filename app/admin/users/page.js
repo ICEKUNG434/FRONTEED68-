@@ -1,19 +1,27 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 
-export default function Page() {
+export default function UsersPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/signin');
+      return;
+    }
+
     let mounted = true;
 
     async function getUsers() {
       try {
-        const res = await fetch('/api/users');
+        const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users');
         if (!res.ok) {
           console.error('Failed to fetch data', res.status, res.statusText);
           return;
@@ -33,7 +41,7 @@ export default function Page() {
       mounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [router]);
 
   const handleDelete = async (id) => {
     const confirmResult = await Swal.fire({
@@ -43,7 +51,7 @@ export default function Page() {
       showCancelButton: true,
       confirmButtonText: 'ใช่, ลบเลย!',
       cancelButtonText: 'ยกเลิก',
-      reverseButtons: true
+      reverseButtons: true,
     });
 
     if (!confirmResult.isConfirmed) return;
@@ -72,7 +80,6 @@ export default function Page() {
 
       setItems((prev) => prev.filter((it) => it.id !== id));
       Swal.fire('ลบสำเร็จ!', 'สมาชิกถูกลบเรียบร้อยแล้ว', 'success');
-
     } catch (error) {
       console.error('Error deleting user:', error);
       Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถลบสมาชิกได้', 'error');
@@ -85,7 +92,9 @@ export default function Page() {
     <div className="container mt-5">
       <div className="card shadow-lg">
         <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-          <h5 className="mb-0"><i className="bi bi-people-fill me-2"></i> รายชื่อสมาชิก</h5>
+          <h5 className="mb-0">
+            <i className="bi bi-people-fill me-2"></i> รายชื่อสมาชิก
+          </h5>
           <Link href="/admin/users/create" className="btn btn-light btn-sm">
             <i className="bi bi-person-plus"></i> เพิ่มสมาชิก
           </Link>
@@ -111,7 +120,9 @@ export default function Page() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="10" className="text-center">Loading...</td>
+                    <td colSpan="10" className="text-center">
+                      Loading...
+                    </td>
                   </tr>
                 ) : items.length > 0 ? (
                   items.map((item) => (
@@ -125,7 +136,10 @@ export default function Page() {
                       <td>{item.sex}</td>
                       <td>{item.birthday}</td>
                       <td className="text-center">
-                        <Link href={`/admin/users/edit/${item.id}`} className="btn btn-warning btn-sm">
+                        <Link
+                          href={`/admin/users/edit/${item.id}`}
+                          className="btn btn-warning btn-sm"
+                        >
                           <i className="bi bi-pencil-square"></i> แก้ไข
                         </Link>
                       </td>
@@ -161,7 +175,6 @@ export default function Page() {
             </table>
           </div>
         </div>
-
       </div>
     </div>
   );
