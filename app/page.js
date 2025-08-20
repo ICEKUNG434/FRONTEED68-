@@ -22,7 +22,7 @@ export default function Home() {
             textShadow: '2px 2px 8px rgba(0, 188, 212, 0.5)',
           }}
         >
-          ยินดีต้อนรับสู่ Rhodes Island
+           Arknights meta character
         </h1>
         <p className="lead" style={{ color: '#cccccc' }}>
           010 โชติกร สุวรรณสาร

@@ -11,13 +11,13 @@ export default function Carousel() {
 <div id="carouselExampleControls" className="carousel slide" data-bs-ride="carousel">
   <div className="carousel-inner">
     <div className="carousel-item active">
-      <Image src="/images/sliders/sliders-01.png" className="d-block w-100" alt="..." width={1920} height={540} />
+      <Image src="/images/sliders/Newbie_Pool_banner.webp" className="d-block w-100" alt="..." width={1920} height={540} />
     </div>
     <div className="carousel-item">
-      <img src="/images/sliders/sliders-02.png" className="d-block w-100" alt="..." />
+      <img src="/images/sliders/new-banner-an-eternity-aflame-v0-m8hby810zqde1.webp" className="d-block w-100" alt="..." width={1920} height={540}  />
     </div>
     <div className="carousel-item">
-      <img src="/images/sliders/sliders-03.png" className="d-block w-100" alt="..." />
+      <img src="/images/sliders/CN_Freedom_of_Preach_banner.webp" className="d-block w-100" alt="..." width={1920} height={540}  />
     </div>
   </div>
   <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
