@@ -1,114 +1,64 @@
-@import "tailwindcss";
-
-/* ฟอนต์พื้นฐาน */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Orbitron', sans-serif;
-  background-color: #121212;
-  color: white;
-  min-height: 100vh;
-
-  /* พื้นหลังหลัก */
-  background-image:
-    url('/rhodes-fallback.png'), /* โลโก้จางๆ */
-    linear-gradient(0deg, rgba(255,255,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px),
-    radial-gradient(circle at 30% 40%, rgba(0,188,212,0.05), transparent 50%);
-
-  background-size:
-    400px,
-    40px 40px,
-    40px 40px,
-    100% 100%;
-
-  background-position:
-    center center,
-    top left,
-    top left,
-    center center;
-
-  background-repeat: no-repeat, repeat, repeat, no-repeat;
-
-  animation: backgroundFade 20s infinite alternate;
+/* ==== Endfield-ish Dark Neon Theme Tokens ==== */
+:root{
+  --ak-cyan: #00e5ff;
+  --ak-cyan-2:#00bcd4;
+  --ink-1: #0b0f14;
+  --ink-2: #11161c;
+  --grid: rgba(255,255,255,.045);
 }
 
-/* เอฟเฟกต์เคลื่อนไหวจางๆ เหมือน UI อนิเมะ */
-@keyframes backgroundFade {
-  0% {
-    background-position:
-      center center,
-      0 0,
-      0 0,
-      center center;
-  }
-  100% {
-    background-position:
-      center center,
-      40px 40px,
-      -40px -40px,
-      center center;
-  }
+/* พื้นหลัง: gradient + grid + glow */
+body{
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(0,229,255,.06), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.4)),
+    repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 40px),
+    linear-gradient(145deg, var(--ink-1), var(--ink-2));
+  color: #cfefff;
 }
 
-/* ให้เนื้อหาเว็บเลื่อนนุ่มนวล */
-html {
-  scroll-behavior: smooth;
+/* แถบเรืองแสงใต้ navbar */
+.ak-topglow{ position:relative; }
+.ak-topglow::after{
+  content:""; position:absolute; left:0; right:0; bottom:-2px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--ak-cyan), transparent);
+  filter:drop-shadow(0 0 10px var(--ak-cyan));
 }
 
-/* สำหรับข้อความหรือปุ่มในธีม */
-h1, h2, h3, .display-4 {
-  font-family: 'Orbitron', sans-serif;
-  color: #00bcd4;
-  text-shadow: 0 0 8px rgba(0, 188, 212, 0.4);
-}
-
-a {
-  color: #00bcd4;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
+/* การ์ดแก้ว + ขอบนีออนบาง ๆ */
+.ak-card{
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border: 1px solid rgba(0,229,255,.16);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  backdrop-filter: blur(6px);
 }
 
 /* ปุ่ม */
-.btn-arknights {
-  background-color: #00bcd4;
-  color: black;
-  border: none;
-  font-weight: bold;
-  box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
-  transition: all 0.2s ease-in-out;
+.btn-ak{
+  background: linear-gradient(90deg, rgba(0,229,255,.22), rgba(0,229,255,.10));
+  border:1px solid rgba(0,229,255,.28);
+  color: var(--ak-cyan);
+  font-weight: 800; letter-spacing:.2px;
+  transition: transform .08s ease, box-shadow .2s ease, border-color .2s ease;
 }
+.btn-ak:hover{ transform: translateY(-1px); box-shadow: 0 0 16px rgba(0,229,255,.35); }
 
-.btn-arknights:hover {
-  background-color: #00acc1;
-  box-shadow: 0 0 15px rgba(0, 188, 212, 0.6);
+/* หัวข้อแนว Endfield */
+.ak-title{ font-family: var(--font-orbitron), system-ui, sans-serif; color: var(--ak-cyan); text-shadow: 0 0 10px rgba(0,229,255,.3); }
+
+/* เส้นวิ่งใต้ลิงก์ */
+.ak-link{ position:relative; }
+.ak-link::after{
+  content:""; position:absolute; left:0; right:100%; bottom:-3px; height:2px;
+  background: linear-gradient(90deg, var(--ak-cyan), transparent); transition:right .25s ease;
 }
+.ak-link:hover::after{ right:0; }
 
+/* ป้าย META/OFFMETA */
+.ak-pill{ padding:2px 8px; border-radius:999px; font-size:12px; letter-spacing:.5px; }
+.ak-pill.meta{ color:#111; background:linear-gradient(90deg,#ffe082,#ffd54f); border:none; }
+.ak-pill.off { color:#cfefff; background:rgba(0,229,255,.12); border:1px solid rgba(0,229,255,.25); }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+html{ scroll-behavior: smooth; }

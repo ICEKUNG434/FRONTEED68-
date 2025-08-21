@@ -1,6 +1,6 @@
 export async function GET() {
   try {
-    const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users');
+    const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users');
     const data = await res.json();
     return new Response(JSON.stringify(data), {
       status: 200,

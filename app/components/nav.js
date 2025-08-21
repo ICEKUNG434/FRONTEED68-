@@ -1,7 +1,41 @@
 'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Navigation() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // รวมแนวคิดจากทั้งสองเวอร์ชัน:
+  // - อ่าน token ตอน mount และ sync เมื่อมีการเปลี่ยนจากแท็บอื่น/โฟกัสกลับมา
+  const [mounted, setMounted] = useState(false);
+  const [authed, setAuthed] = useState(false);
+
+  useEffect(() => {
+    const sync = () => setAuthed(!!localStorage.getItem('token'));
+    sync();
+    setMounted(true);
+
+    const onStorage = () => sync();
+    const onFocus = () => sync();
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, []);
+
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role'); // ถ้ามีเก็บ role
+    setAuthed(false);
+    if (pathname?.startsWith('/admin')) router.push('/admin/signin');
+    else router.push('/signin');
+  };
+
   return (
     <nav
       className="navbar navbar-expand-lg"
@@ -39,7 +73,7 @@ export default function Navigation() {
               { name: 'Home', href: '/' },
               { name: 'Contact', href: '/contact' },
               { name: 'About', href: '/about' },
-              { name: 'เข้าสู่ระบบ', href: '/login' },
+              { name: 'เข้าสู่ระบบ', href: '/login' }, // คงเมนูซ้ายตามโค้ดเดิม
             ].map((item) => (
               <li className="nav-item" key={item.name}>
                 <Link
@@ -75,6 +109,7 @@ export default function Navigation() {
             </li>
           </ul>
 
+          {/* แบบฟอร์มค้นหาเดิม + ปุ่ม Sign Out เมื่อมี token */}
           <form className="d-flex" role="search">
             <input
               className="form-control me-2"
@@ -98,6 +133,16 @@ export default function Navigation() {
             >
               Search
             </button>
+
+            {mounted && authed && (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="btn btn-outline-danger ms-2"
+              >
+                <i className="bi bi-box-arrow-right"></i> Sign Out
+              </button>
+            )}
           </form>
         </div>
       </div>

@@ -21,7 +21,7 @@ export default function UsersPage() {
 
     async function getUsers() {
       try {
-        const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users');
+        const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users');
         if (!res.ok) {
           console.error('Failed to fetch data', res.status, res.statusText);
           return;
@@ -59,7 +59,7 @@ export default function UsersPage() {
     setDeletingId(id);
 
     try {
-      const res = await fetch(`http://itdev.cmtc.ac.th:3000/api/users/${id}`, {
+      const res = await fetch(`https://backend-nextjs-virid.vercel.app/api/users/${id}`, {
         method: 'DELETE',
         headers: { Accept: 'application/json' },
       });

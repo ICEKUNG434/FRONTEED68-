@@ -1,6 +1,8 @@
 'use client';
 import Carousel from "./components/carousel";
-import Card from "./components/card"; // ชื่อเป็นตัวพิมพ์ใหญ่
+import Card from "./components/card";
+import Navigation from "./components/nav";
+import Footer from "./components/footer"; // ชื่อเป็นตัวพิมพ์ใหญ่
 
 export default function Home() {
   return (
@@ -22,7 +24,7 @@ export default function Home() {
             textShadow: '2px 2px 8px rgba(0, 188, 212, 0.5)',
           }}
         >
-           Arknights meta character
+          ยินดีต้อนรับสู่ Rhodes Island
         </h1>
         <p className="lead" style={{ color: '#cccccc' }}>
           010 โชติกร สุวรรณสาร
