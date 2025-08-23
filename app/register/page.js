@@ -1,191 +1,105 @@
 'use client'
 import { useState } from 'react'
-
+import Swal from 'sweetalert2'
+import { useRouter } from 'next/navigation'
 export default function Register() {
-  const [form, setForm] = useState({
-    firstname: '',
-    fullname: '',
-    lastname: '',
-    username: '',
-    password: '',
-    address: '',
-    sex: '',
-    birthday: ''
-  })
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-  }
-
+  const router = useRouter()
+  const [firstname, setFirstname] = useState('')
+  const [fullname, setFullname] = useState('')
+  const [lastname, setLastname] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
+    const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users', {
+      method: 'POST',
+      headers: {
+        Accept : 'application/json',
+      },
+      body: JSON.stringify({ firstname, fullname, lastname, username, password }),
+    })
+    const result = await res.json();
+    console.log(result);
+    if (res.ok) {
+      Swal.fire({
+        icon: 'success',
+        title: '<h3>บันทึกข้อมูลเรียบร้อยแล้ว</h3>',
+        showConfirmButton: false,
+        timer: 2000
+        }).then(function () {
+        router.push('/register')
+      });
+      setFirstname('')
+      setFullname('')
+      setLastname('')
+      setUsername('')
+      setPassword('')
+    } else {
+      Swal.fire({
+        title: 'Error!',
+        text: 'เกิดข้อผิดพลาด!',
+        icon: 'error',
+        confirmButtonText: 'ตกลง'
       })
-      if (!res.ok) {
-        const text = await res.text()
-        console.error('Register failed:', text)
-        alert('❌ สมัครไม่สำเร็จ')
-        return
-      }
-      const data = await res.json()
-      alert('✅ สมัครสมาชิกสำเร็จ')
-      console.log('Response:', data)
-      // ถ้าต้องการ reset form ให้เปิดคอมเมนต์ด้านล่าง
-      // setForm({ firstname: '', fullname: '', lastname: '', username: '', password: '', address: '', sex: '', birthday: '' })
-    } catch (error) {
-      console.error('Error:', error)
-      alert('❌ เกิดข้อผิดพลาด')
     }
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'ข้อผิดพลาดเครือข่าย',
+      text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+    })
   }
-
+  }
   return (
-    <div className="container mt-5">
-      <div className="card shadow-lg">
-        <div className="card-header bg-success text-white">
-          <h5 className="mb-0">ฟอร์มสมัครสมาชิก</h5>
-        </div>
-        <div className="card-body">
-          <form onSubmit={handleSubmit} className="row g-3">
-            <div className="col-md-4">
-              <label htmlFor="firstname" className="form-label">คำนำหน้า</label>
-              <select
-                id="firstname"
-                name="firstname"
-                className="form-select"
-                value={form.firstname}
-                onChange={handleChange}
-                required
-              >
-                <option value="">-- เลือกคำนำหน้า --</option>
-                <option value="นาย">นาย</option>
-                <option value="นาง">นาง</option>
-                <option value="นางสาว">นางสาว</option>
-              </select>
-            </div>
-
-            <div className="col-md-4">
-              <label htmlFor="fullname" className="form-label">ชื่อ</label>
-              <div className="input-group">
-                <span className="input-group-text" id="addon-fullname"><i className="bi bi-person"></i></span>
+    <div className="max-w-md mx-auto mt-10 p-4 border rounded">
+      <h1 className="text-xl font-bold mb-4">สมัครสมาชิก</h1>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <select name="firstname" onChange={(e) => setFirstname(e.target.value)} className="w-full border p-2 rounded" required>
+          <option value="">คำนำหน้าชื่อ</option>
+          <option value="นาย">นาย</option>
+          <option value="นาง">นาง</option>
+          <option value="นางสาว">นางสาว</option>
+        </select>
+        <input
+          type="text"
+          placeholder="ชื่อ"
+          value={fullname}
+          onChange={(e) => setFullname(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
+        <input
+          type="text"
+          placeholder="นามสกุล"
+          value={lastname}
+          onChange={(e) => setLastname(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
                 <input
-                  id="fullname"
-                  name="fullname"
-                  type="text"
-                  className="form-control"
-                  value={form.fullname}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <label htmlFor="lastname" className="form-label">นามสกุล</label>
-              <div className="input-group">
-                <span className="input-group-text" id="addon-lastname"><i className="bi bi-person-badge"></i></span>
+          type="text"
+          placeholder="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
                 <input
-                  id="lastname"
-                  name="lastname"
-                  type="text"
-                  className="form-control"
-                  value={form.lastname}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="col-md-6">
-              <label htmlFor="username" className="form-label">Username</label>
-              <div className="input-group">
-                <span className="input-group-text" id="addon-username"><i className="bi bi-person-circle"></i></span>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  className="form-control"
-                  value={form.username}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="col-md-6">
-              <label htmlFor="password" className="form-label">Password</label>
-              <div className="input-group">
-                <span className="input-group-text" id="addon-password"><i className="bi bi-lock"></i></span>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  className="form-control"
-                  value={form.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="col-md-8">
-              <label htmlFor="address" className="form-label">ที่อยู่</label>
-              <input
-                id="address"
-                name="address"
-                type="text"
-                className="form-control"
-                value={form.address}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="col-md-4">
-              <label htmlFor="sex" className="form-label">เพศ</label>
-              <select
-                id="sex"
-                name="sex"
-                className="form-select"
-                value={form.sex}
-                onChange={handleChange}
-                required
-              >
-                <option value="">-- เลือกเพศ --</option>
-                <option value="ชาย">ชาย</option>
-                <option value="หญิง">หญิง</option>
-              </select>
-            </div>
-
-            <div className="col-md-4">
-              <label htmlFor="birthday" className="form-label">วันเกิด</label>
-              <div className="input-group">
-                <span className="input-group-text" id="addon-birthday"><i className="bi bi-calendar-event"></i></span>
-                <input
-                  id="birthday"
-                  name="birthday"
-                  type="text"
-                  placeholder="เช่น 14/02/2545"
-                  className="form-control"
-                  value={form.birthday}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="col-12 text-end">
-              <button type="submit" className="btn btn-success">
-                <i className="bi bi-person-plus"></i> สมัครสมาชิก
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+          type="text"
+          placeholder="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+        >
+          สมัครสมาชิก
+        </button>
+      </form>
     </div>
   )
 }

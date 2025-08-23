@@ -1,203 +1,141 @@
-'use client';
+'use client'
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2'
+import { useParams, useRouter } from 'next/navigation'
+export default function Page() {
+  const router = useRouter()
+  const params = useParams();
+  const id = params.id;
+  const [firstname, setFirstname] = useState('')
+  const [fullname, setFullname] = useState('')
+  const [lastname, setLastname] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [items, setItems] = useState([]);
+    useEffect(() => {
+        async function getUsers() {
+          try {
+            const res = await fetch(`https://backend-nextjs-virid.vercel.app/api/users/${id}`);
+            if (!res.ok) {
+              console.error('Failed to fetch data');
+              return;
+            }
+            const data = await res.json();
+            setItems(data);
 
-export default function Page({ params }) {
-  const router = useRouter();
-  const [resolvedParams, setResolvedParams] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({
-    firstname: '',
-    fullname: '',
-    lastname: '',
-    username: '',
-    password: '',
-    address: '',
-    sex: '',
-    birthday: ''
-  });
-
-  // Resolve params
-  useEffect(() => {
-    let mounted = true;
-    const resolveParams = async () => {
-      try {
-        const p = typeof params?.then === 'function' ? await params : params;
-        if (!mounted) return;
-        setResolvedParams(p);
-      } catch (err) {
-        console.error('Failed to resolve params', err);
-      }
-    };
-    resolveParams();
-    return () => { mounted = false; };
-  }, [params]);
-
-  // Fetch user data
-  useEffect(() => {
-    if (!resolvedParams) return;
-    const { id } = resolvedParams;
-    let mounted = true;
-
-    const getUser = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users'); // ดึงทั้งหมด
-        if (!res.ok) {
-          console.error('GET user failed', res.status, res.statusText);
-          return;
+        //กำหนดค่า state เริ่มต้นจาก API
+        if (data.length > 0) {
+          const user = data[0];
+          setFirstname(user.firstname || '');
+          setFullname(user.fullname || '');
+          setLastname(user.lastname || '');
+          setUsername(user.username || '');
+          setPassword(user.password || '');
         }
-        const data = await res.json();
-        // แปลง id ให้ตรงกันทั้งสองฝั่ง
-        const user = data.find(u => Number(u.id) === Number(id));
-        if (!user) {
-          console.error('User not found with id:', id);
-          return;
+
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
         }
-        if (!mounted) return;
-        setForm({
-          firstname: user.firstname ?? '',
-          fullname: user.fullname ?? '',
-          lastname: user.lastname ?? '',
-          username: user.username ?? '',
-          password: user.password ?? '',
-          address: user.address ?? '',
-          sex: user.sex ?? '',
-          birthday: user.birthday ?? ''
-        });
-      } catch (err) {
-        console.error('Error fetching user', err);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    getUser();
-    return () => { mounted = false; };
-  }, [resolvedParams]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((p) => ({ ...p, [name]: value }));
-  };
-
-const handleUpdateSubmit = async (e) => {
-  e.preventDefault();
-  if (!resolvedParams) { alert('ไม่พบ id'); return; }
-  const { id } = resolvedParams;
-  setSubmitting(true);
-
-  const payload = { id, ...form }; // ใส่ id ด้วย
-
-  try {
+     
+      getUsers();
+      //const interval  = setInterval(getUsers, 1000);
+      //return () => clearInterval(interval);
+    }, []);
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
     const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
+      headers: {
+        Accept : 'application/json',
+      },
+      body: JSON.stringify({ id, firstname, fullname, lastname, username, password }),
+    })
+    const result = await res.json();
+    console.log(result);
     if (res.ok) {
-      alert('✅ อัปเดตสำเร็จ');
-      router.push('/admin/users');
+      Swal.fire({
+        icon: 'success',
+        title: '<h3>ปรับปรุงข้อมูลเรียบร้อยแล้ว</h3>',
+        showConfirmButton: false,
+        timer: 2000
+        }).then(function () {
+        router.push('/register')
+      });
+      setFirstname('')
+      setFullname('')
+      setLastname('')
+      setUsername('')
+      setPassword('')
     } else {
-      const text = await res.text();
-      console.error('Update failed', res.status, text);
-      alert('❌ อัปเดตไม่สำเร็จ ดู console เพื่อรายละเอียด');
+      Swal.fire({
+        title: 'Error!',
+        text: 'เกิดข้อผิดพลาด!',
+        icon: 'error',
+        confirmButtonText: 'ตกลง'
+      })
     }
-  } catch (err) {
-    console.error('Network error', err);
-    alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ');
-  } finally {
-    setSubmitting(false);
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'ข้อผิดพลาดเครือข่าย',
+      text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+    })
   }
-};
-
+  }
   return (
-    <>
-      <br /><br /><br />
-      <div className="container">
-        <div className="card">
-          <div className="card-header bg-warning text-dark">Edit Form</div>
-          <div className="card-body">
-            {loading ? (
-              <p>Loading...</p>
-            ) : (
-              <form className="row g-3" onSubmit={handleUpdateSubmit}>
-                <div className="col-md-4">
-                  <label htmlFor="firstname" className="form-label">คำนำหน้า</label>
-                  <select id="firstname" name="firstname" className="form-select" value={form.firstname} onChange={handleChange} required disabled={submitting}>
-                    <option value="">-- เลือกคำนำหน้า --</option>
-                    <option value="นาย">นาย</option>
-                    <option value="นาง">นาง</option>
-                    <option value="นางสาว">นางสาว</option>
-                  </select>
-                </div>
-
-                <div className="col-md-4">
-                  <label htmlFor="fullname" className="form-label">ชื่อ</label>
-                  <div className="input-group">
-                    <span className="input-group-text"><i className="bi bi-person"></i></span>
-                    <input id="fullname" name="fullname" type="text" className="form-control" value={form.fullname} onChange={handleChange} required disabled={submitting} />
-                  </div>
-                </div>
-
-                <div className="col-md-4">
-                  <label htmlFor="lastname" className="form-label">นามสกุล</label>
-                  <div className="input-group">
-                    <span className="input-group-text"><i className="bi bi-person-badge"></i></span>
-                    <input id="lastname" name="lastname" type="text" className="form-control" value={form.lastname} onChange={handleChange} required disabled={submitting} />
-                  </div>
-                </div>
-
-                <div className="col-md-6">
-                  <label htmlFor="username" className="form-label">Username</label>
-                  <div className="input-group">
-                    <span className="input-group-text"><i className="bi bi-person-circle"></i></span>
-                    <input id="username" name="username" type="text" className="form-control" value={form.username} onChange={handleChange} required disabled={submitting} />
-                  </div>
-                </div>
-
-                <div className="col-md-6">
-                  <label htmlFor="password" className="form-label">Password</label>
-                  <div className="input-group">
-                    <span className="input-group-text"><i className="bi bi-lock"></i></span>
-                    <input id="password" name="password" type="password" className="form-control" value={form.password} onChange={handleChange} required disabled={submitting} />
-                  </div>
-                </div>
-
-                <div className="col-md-8">
-                  <label htmlFor="address" className="form-label">ที่อยู่</label>
-                  <input id="address" name="address" type="text" className="form-control" value={form.address} onChange={handleChange} disabled={submitting} />
-                </div>
-
-                <div className="col-md-4">
-                  <label htmlFor="sex" className="form-label">เพศ</label>
-                  <select id="sex" name="sex" className="form-select" value={form.sex} onChange={handleChange} required disabled={submitting}>
-                    <option value="">-- เลือกเพศ --</option>
-                    <option value="ชาย">ชาย</option>
-                    <option value="หญิง">หญิง</option>
-                  </select>
-                </div>
-
-                <div className="col-md-4">
-                  <label htmlFor="birthday" className="form-label">วันเกิด</label>
-                  <div className="input-group">
-                    <span className="input-group-text"><i className="bi bi-calendar-event"></i></span>
-                    <input id="birthday" name="birthday" type="text" placeholder="เช่น 14/02/2545" className="form-control" value={form.birthday} onChange={handleChange} disabled={submitting} />
-                  </div>
-                </div>
-
-                <div className="col-12">
-                  <button type="submit" className="btn btn-warning" disabled={submitting}>
-                    <i className="bi bi-box-arrow-right"></i> {submitting ? 'Updating...' : 'UPDATE'}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
-  );
+    <div className="max-w-md mx-auto mt-10 p-4 border rounded">
+      <h1 className="text-xl font-bold mb-4">แก้ไขข้อมูลสมัครสมาชิก {id}</h1>
+      {items.map((item) => (
+      <form key={item.id} onSubmit={handleUpdateSubmit} className="space-y-3">
+       
+        <select name="firstname" onChange={(e) => setFirstname(e.target.value)} className="w-full border p-2 rounded" required>
+          <option value="{item.firstname}">{item.firstname}</option>
+          <option value="นาย">นาย</option>
+          <option value="นาง">นาง</option>
+          <option value="นางสาว">นางสาว</option>
+        </select>
+        <input
+          type="text"
+          placeholder="ชื่อ"
+          defaultValue={item.fullname}
+          onChange={(e) => setFullname(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
+        <input
+          type="text"
+          placeholder="นามสกุล"
+          defaultValue={item.lastname}
+          onChange={(e) => setLastname(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
+                <input
+          type="text"
+          placeholder="username"
+          defaultValue={item.username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
+                <input
+          type="text"
+          placeholder="password"
+          defaultValue={item.password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
+        <button
+          type="submit"
+          className="w-full bg-warning text-white p-2 rounded hover:bg-blue-600"
+        >
+          ปรับปรุงข้อมูล
+        </button>
+      </form>
+       ))} //ปิด items.map
+    </div>
+  )
 }
