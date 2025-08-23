@@ -1,8 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import Carousel from "./components/carousel";
+import Card from "./components/card";
 import Navigation from "./components/nav";
 import Footer from "./components/footer";
-
+import './globals.css'
 // ฟอนต์จาก Google Fonts
 import { Orbitron } from "next/font/google";
 import { Prompt } from "next/font/google";
@@ -15,7 +17,8 @@ const orbitron = Orbitron({
   variable: "--font-orbitron",
 });
 
-const prompt = Prompt({
+// ✅ เปลี่ยนชื่อเป็น fontPrompt แทนการใช้ชื่อ prompt
+const fontPrompt = Prompt({
   subsets: ["thai", "latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
@@ -44,12 +47,12 @@ export default function RootLayout({ children }) {
     <html lang="th">
       <body
         className={`
-          ${prompt.variable}
+          ${fontPrompt.variable}
           ${geistSans.variable}
           ${geistMono.variable}
           ${orbitron.variable}
           d-flex flex-column min-vh-100
-          bg-dark text-light
+          ak-yellow
         `}
         style={{
           fontFamily: "var(--font-prompt), var(--font-orbitron), sans-serif",

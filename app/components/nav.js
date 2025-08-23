@@ -11,6 +11,12 @@ export default function Navigation() {
   const [mounted, setMounted] = useState(false);
   const [authed, setAuthed] = useState(false);
 
+  // ให้ Bootstrap collapse/toggler ทำงาน
+  useEffect(() => {
+    import('bootstrap/dist/js/bootstrap.bundle.min.js');
+  }, []);
+
+  // sync สถานะล็อกอินจาก localStorage
   useEffect(() => {
     const sync = () => setAuthed(!!localStorage.getItem('token'));
     sync(); setMounted(true);
@@ -33,8 +39,8 @@ export default function Navigation() {
       confirmButtonText: 'ออกจากระบบ',
       cancelButtonText: 'ยกเลิก',
       confirmButtonColor: '#d33',
-      background: '#111',
-      color: '#fff',
+      background: '#fff',
+      color: '#111',
     });
     if (!res.isConfirmed) return;
 
@@ -47,49 +53,83 @@ export default function Navigation() {
       icon: 'success',
       timer: 1200,
       showConfirmButton: false,
-      background: '#111',
-      color: '#fff',
+      background: '#fff',
+      color: '#111',
     });
 
     router.push(pathname?.startsWith('/admin') ? '/admin/login' : '/login');
   };
 
+  const items = [
+    { name: 'Home', href: '/' },
+    { name: 'Service', href: '/service' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'About', href: '/about' },
+    { name: 'เข้าสู่ระบบ', href: '/login' },
+  ];
+
+  // ให้ active ครอบคลุมเส้นทางย่อยด้วย
+  const isActiveLink = (href) =>
+    pathname === href || (href !== '/' && pathname?.startsWith(href));
+
   return (
-    <nav className="navbar navbar-expand-lg ak-topglow" style={{ backgroundColor: '#1f1f1f' }}>
-      <div className="container-fluid">
-        <Link className="navbar-brand text-light" href="/" style={{ fontWeight: 'bold' }}>
-          RHODES ISLAND
+    <nav className="navbar navbar-expand-lg ef-nav ak-topglow" role="navigation" aria-label="Main">
+      <div className="container ef-inner">
+        {/* โลโก้ (ซ้าย) */}
+        <Link className="navbar-brand ef-brand" href="/" aria-label="Home">
+          RHODES <span>ISLAND</span>
         </Link>
 
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        {/* toggler (ไปขวาอัตโนมัติบน mobile) */}
+        <button
+          className="navbar-toggler ef-toggler ms-auto"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
           <span className="navbar-toggler-icon" />
         </button>
 
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            {[
-              { name: 'Home', href: '/' },
-              { name: 'Service', href: '/service' },
-              { name: 'Contact', href: '/contact' },
-              { name: 'About', href: '/about' },
-              { name: 'เข้าสู่ระบบ', href: '/login' },
-            ].map((item) => (
-              <li className="nav-item" key={item.name}>
-                <Link className="nav-link text-light" href={item.href}>{item.name}</Link>
-              </li>
-            ))}
+        {/* กลุ่มเมนู + ปุ่ม (ขวา) */}
+        <div className="collapse navbar-collapse ef-collapse ms-lg-auto" id="navbarSupportedContent">
+          <ul className="navbar-nav ef-menu ms-lg-auto mb-2 mb-lg-0">
+            {items.map((item) => {
+              const active = isActiveLink(item.href);
+              const isLogin = item.href === '/login';
+              return (
+                <li className="nav-item" key={item.name}>
+                  <Link
+                    className={`nav-link ef-link ${active ? 'active' : ''}`}
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                  >
+                    {isLogin ? (
+                      <>
+                        <i className="bi bi-soundwave me-2" />
+                        <span>{item.name}</span>
+                      </>
+                    ) : (
+                      <span>{item.name}</span>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
-          <form className="d-flex" role="search">
-            <input className="form-control me-2" type="search" placeholder="ค้นหา" aria-label="Search" />
-            <button className="btn btn-outline-info" type="submit">Search</button>
-
-            {mounted && authed && (
-              <button type="button" onClick={handleSignOut} className="btn btn-outline-danger ms-2">
-                <i className="bi bi-box-arrow-right" /> Sign Out
-              </button>
-            )}
-          </form>
+          {mounted && authed && (
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="btn btn-outline-ink ef-signout ms-lg-3"
+            >
+              <i className="bi bi-box-arrow-right" />
+              <span className="ms-2 d-none d-xl-inline">Sign Out</span>
+            </button>
+          )}
         </div>
       </div>
     </nav>
