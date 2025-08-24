@@ -8,7 +8,7 @@ export default function Home() {
   const homeRef = useRef(null);
   const heroRef = useRef(null);
 
-  /* Spotlight ตามเมาส์ (ไปผสมกับ .ak-yellow::after ที่คุณมีอยู่) */
+  // Spotlight ตามเมาส์
   useEffect(() => {
     const el = homeRef.current ?? document.documentElement;
     const onMove = (e) => {
@@ -20,7 +20,7 @@ export default function Home() {
     return () => window.removeEventListener('pointermove', onMove);
   }, []);
 
-  /* Reveal-on-scroll สำหรับส่วนล่าง */
+  // Reveal-on-scroll
   useEffect(() => {
     const root = homeRef.current;
     if (!root) return;
@@ -37,9 +37,29 @@ export default function Home() {
     return () => io.disconnect();
   }, []);
 
+  // อัปเดต --navH อัตโนมัติ
+  useEffect(() => {
+    const setNavH = () => {
+      const nav = document.querySelector('.ef-nav');
+      const h = nav ? nav.offsetHeight : 76;
+      document.documentElement.style.setProperty('--navH', `${h}px`);
+    };
+    setNavH();
+    const ro = new ResizeObserver(setNavH);
+    const nav = document.querySelector('.ef-nav');
+    if (nav) ro.observe(nav);
+    window.addEventListener('resize', setNavH);
+    window.addEventListener('orientationchange', setNavH);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', setNavH);
+      window.removeEventListener('orientationchange', setNavH);
+    };
+  }, []);
+
   return (
     <div ref={homeRef} className="ef-home ak-yellow">
-      {/* ===== HERO (วิดีโอพื้นหลังวน เต็มหน้าจอจริง) ===== */}
+      {/* ===== HERO ===== */}
       <section ref={heroRef} className="ef-hero" aria-label="Arknights: Endfield">
         <video
           className="ef-hero-video"
@@ -50,18 +70,17 @@ export default function Home() {
           preload="metadata"
           poster="/images/endfield/hero-poster.jpg"
         >
-          <source src="/video/Arknights Endfield Beta Test Trailer - Arknights Endfield (1080p, h264).mp4" type="video/mp4" />
+          <source
+            src="/video/Arknights Endfield Beta Test Trailer - Arknights Endfield (1080p, h264).mp4"
+            type="video/mp4"
+          />
         </video>
 
-        {/* โครงพื้น + ท็อปเฟดกันกลืนกับ navbar */}
         <div className="ef-hero-overlay" aria-hidden />
         <div className="ef-hero-topfade" aria-hidden />
-        {/* เส้น scanline บาง ๆ เพิ่มมิติ (ไม่ใช้สีเหลืองทึบ) */}
         <div className="ef-hero-scanline" aria-hidden />
 
-        {/* ไม่มีปุ่ม/เม็ดเหลืองกลางจออีกต่อไป */}
         <div className="ef-hero-center" />
-        {/* cue เลื่อนลง (จาง ๆ) */}
         <a href="#trailer" className="ef-scroll-cue" aria-label="Scroll to trailer">
           <span className="ef-arrow" />
         </a>
@@ -78,32 +97,29 @@ export default function Home() {
       </section>
 
       <style jsx>{`
-        .ef-home { position: relative; min-height: 100vh; }
+        .ef-home { position: relative; min-height: 100svh; }
 
-        /* ระยะห่าง section ใต้ hero */
         .ef-section { padding: 40px 0; }
-        #trailer{ scroll-margin-top: calc(var(--navH, 100px) + 12px); }
+        #trailer { scroll-margin-top: calc(var(--navH, 76px) + 12px); }
 
-        /* HERO ให้กินเต็ม viewport จริง + อยู่ใต้ navbar */
         .ef-hero{
           position: relative;
-          height: calc(100vh + var(--navH, 100px));
+          height: calc(100svh + var(--navH, 76px));
           display:flex; align-items:center; justify-content:center;
-          margin-top: calc(var(--navH, 100px) * -1);
-          padding-top: var(--navH, 100px);
+          margin-top: calc(var(--navH, 76px) * -1);
+          padding-top: var(--navH, 76px);
           overflow: hidden;
           isolation: isolate;
         }
+        @supports not (height: 100svh){
+          .ef-hero{ height: calc(100vh + var(--navH, 76px)); }
+        }
         .ef-hero-video{
           position:absolute; inset:0;
-          width:100%; height:100%;
-          object-fit:cover;
-          z-index:-3;
-          pointer-events:none;
-          transform: scale(1.02); /* กันขอบดำจอ ultra-wide */
+          width:100%; height:100%; object-fit:cover;
+          z-index:-3; pointer-events:none;
+          transform: scale(1.02);
         }
-
-        /* ลายกริด + ไฮไลต์จาง ๆ (ไม่มีเม็ดเหลืองใด ๆ) */
         .ef-hero-overlay{
           position:absolute; inset:0; z-index:-2; pointer-events:none;
           background:
@@ -111,13 +127,11 @@ export default function Home() {
             repeating-linear-gradient(0deg, rgba(0,0,0,.06) 0 1px, transparent 1px 40px),
             repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 1px, transparent 1px 40px);
         }
-        /* เฟดขาวด้านบนเพื่อไม่ให้ navbar กลืน */
         .ef-hero-topfade{
-          position:absolute; left:0; right:0; top:0; height:120px;
+          position:absolute; left:0; right:0; top:0; height: max(80px, var(--navH, 76px));
           background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,0));
           z-index:-1;
         }
-        /* scanline บาง ๆ เพิ่มมิติ */
         .ef-hero-scanline{
           position:absolute; left:5%; right:5%; top:54%; height:2px; opacity:.35; pointer-events:none;
           background:repeating-linear-gradient(90deg,#cfd3d8 0 10px, transparent 10px 20px);
@@ -127,14 +141,15 @@ export default function Home() {
 
         .ef-hero-center{ text-align:center; color:#111; padding: 0 16px; }
 
-        /* cue ให้รู้ว่ามีคอนเทนต์ด้านล่าง (เล็ก จาง ไม่รบกวน) */
         .ef-scroll-cue{
-          position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
+          position:absolute; left:50%; bottom: max(22px, env(safe-area-inset-bottom));
+          transform:translateX(-50%);
           width:28px; height:44px; border-radius:20px;
           border:1px solid rgba(0,0,0,.28);
           display:flex; align-items:flex-start; justify-content:center;
           text-decoration:none; opacity:.6;
           transition: opacity .2s ease, transform .2s ease;
+          backdrop-filter: blur(2px);
         }
         .ef-scroll-cue:hover{ opacity:.9; transform:translateX(-50%) translateY(-2px); }
         .ef-arrow{
@@ -147,16 +162,12 @@ export default function Home() {
           100%{ transform: translateY(0); opacity:.55 }
         }
 
-        /* Reveal on scroll */
         [data-reveal]{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
         .reveal-in{ opacity:1; transform:none; }
 
         @media (max-width: 991.98px){
-          .ef-hero{
-            height: calc(100vh + var(--navH, 76px));
-            margin-top: calc(var(--navH, 76px) * -1);
-            padding-top: var(--navH, 76px);
-          }
+          .ef-section{ padding: 28px 0; }
+          .ef-hero-video{ transform: none; }
         }
         @media (prefers-reduced-motion: reduce){
           .ef-hero-video{ transform:none; }
