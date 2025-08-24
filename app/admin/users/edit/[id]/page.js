@@ -3,7 +3,8 @@ import { useEffect, useMemo, useState } from 'react'
 import Swal from 'sweetalert2'
 import { useParams, useRouter } from 'next/navigation'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://backend-nextjs-virid.vercel.app'
+// ✅ ใช้ endpoint ตามที่ขอแบบชัดเจน
+const USERS_API = 'https://backend-nextjs-virid.vercel.app/api/users'
 
 // แปลง "14/02/2545" -> "2002-02-14"
 function toInputDate(v) {
@@ -70,7 +71,8 @@ export default function Page() {
   useEffect(() => {
     async function getUser() {
       try {
-        const res = await fetch(`${API_BASE}/api/users/${id}`)
+        // ✅ GET โดยใช้ /api/users/:id
+        const res = await fetch(`${USERS_API}/${id}`)
         if (!res.ok) {
           console.error('Failed to fetch data', res.status, res.statusText)
           Swal.fire({ icon: 'error', title: 'ไม่พบข้อมูลผู้ใช้', text: `ID: ${id}` })
@@ -114,8 +116,9 @@ export default function Page() {
     e.preventDefault()
     setSubmitting(true)
     try {
-      const res = await fetch(`${API_BASE}/api/users`, {
-        method: 'PUT', // หาก backend ใช้ PUT /api/users/:id ให้แก้ URL เป็น `${API_BASE}/api/users/${id}`
+      // ✅ PUT ไปที่ /api/users (ตามที่ให้มา) โดยส่ง id ใน body
+      const res = await fetch(USERS_API, {
+        method: 'PUT',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -334,7 +337,7 @@ export default function Page() {
   )
 }
 
-/* ===== CSS-in-JSX (ไม่พึ่ง Tailwind/Bootstrap) ===== */
+/* ===== CSS-in-JSX ===== */
 const styles = `
 .edit-shell{
   --accent:#ffd54d; --accent2:#ffc107; --stroke:#e7e7e7; --ink:#111; --muted:#6b7280;
