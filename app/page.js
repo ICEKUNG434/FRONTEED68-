@@ -71,7 +71,7 @@ export default function Home() {
           poster="/images/endfield/hero-poster.jpg"
         >
           <source
-            src="/video/Arknights Endfield Beta Test Trailer - Arknights Endfield (1080p, h264).mp4"
+            src="/video/mylivewallpapers.com-Kelp-Forest.mp4"
             type="video/mp4"
           />
         </video>
