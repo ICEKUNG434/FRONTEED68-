@@ -21,83 +21,121 @@ export default function SubnauticaUI() {
     if (!c) return;
     const ctx = c.getContext('2d');
     let w,h,id;
-    const resize=()=>{ w=c.width=innerWidth; h=c.height=innerHeight; }
+    const resize = ()=>{ w=c.width=innerWidth; h=c.height=innerHeight; }
     resize();
     window.addEventListener('resize', resize);
-    const P = Array.from({length:50},() => ({
-      x: Math.random()*w, y:h+Math.random()*50,
-      vx: (Math.random()-0.5)*0.1,
-      vy: -(0.2+Math.random()*0.3),
-      r:1+Math.random()*2, a:0.2+Math.random()*0.3
+
+    // Bubble particles
+    const P = Array.from({length:100},() => ({
+      x: Math.random()*w,
+      y: h + Math.random()*100,
+      vx: (Math.random()-0.5)*0.2,
+      vy: -(0.2+Math.random()*0.5),
+      r: 2+Math.random()*4,
+      a: 0.2+Math.random()*0.4,
+      grow: Math.random()*0.02
     }));
-    const tick=()=>{
+
+    const tick = () => {
       ctx.clearRect(0,0,w,h);
-      ctx.globalCompositeOperation='lighter';
+      ctx.globalCompositeOperation = 'lighter';
       for(const p of P){
-        p.x+=p.vx; p.y+=p.vy;
-        if(p.y<-10)p.y=h+10;
-        const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*10);
-        g.addColorStop(0,`rgba(118,240,247,${p.a})`);
+        p.x += p.vx;
+        p.y += p.vy;
+        p.r += p.grow; // ขยายตัวเล็กน้อย
+        if(p.y < -10) { p.y = h+10; p.r = 2+Math.random()*4; } // reset เมื่อฟองลอยออก
+        const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
+        g.addColorStop(0, `rgba(118,240,247,${p.a})`);
         g.addColorStop(1,'rgba(118,240,247,0)');
-        ctx.fillStyle=g;
+        ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r*4,0,Math.PI*2);
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
         ctx.fill();
       }
-      id=requestAnimationFrame(tick);
-    };
+      id = requestAnimationFrame(tick);
+    }
     tick();
-    return ()=>{ window.removeEventListener('resize', resize); cancelAnimationFrame(id); }
+    return () => { window.removeEventListener('resize', resize); cancelAnimationFrame(id); }
   },[]);
 
   const current = TOOLS[tab];
 
   return (
-    <div className={`sub-screen ${kanit.variable}`} style={{position:'relative', minHeight:'100vh', fontFamily:'var(--font-kanit)'}}>
-      {/* Canvas effect */}
+    <div className={`sub-screen ${kanit.variable}`} style={{
+      position:'relative', minHeight:'100vh', fontFamily:'var(--font-kanit)',
+      background:'linear-gradient(180deg, #001f3f 0%, #003366 100%)'
+    }}>
+      {/* Canvas bubbles */}
       <canvas ref={canvasRef} style={{position:'fixed', inset:0, zIndex:-1, pointerEvents:'none'}} />
 
       {/* Header */}
-      <header style={{textAlign:'center', padding:'40px 0'}}>
-        <h1 style={{color:'#76f0f7', fontSize:'2.5rem'}}>Ocean Explorer</h1>
-        <p style={{color:'#060707ff'}}>Subnautica Inspired UI</p>
+      <header style={{textAlign:'center', padding:'60px 20px', color:'#76f0f7'}}>
+        <h1 style={{fontSize:'3rem', textShadow:'0 0 20px #76f0f7'}}>Ocean Explorer</h1>
+        <p style={{fontSize:'1.2rem', color:'#a0e7ff'}}>Subnautica Inspired UI</p>
+
+        {/* Load Game Button */}
+        <a 
+          href="https://store.steampowered.com/app/264710/Subnautica/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display:'inline-block',
+            marginTop:'24px',
+            padding:'14px 28px',
+            borderRadius:'20px',
+            background:'#0a2e4a',
+            color:'#fff',
+            fontWeight:'700',
+            textDecoration:'none',
+            cursor:'pointer',
+            boxShadow:'0 0 20px #0af0ff, 0 4px 12px rgba(0,0,0,0.5)',
+            transition:'all 0.3s ease',
+            transform:'translateY(0)'
+          }}
+          onMouseEnter={e=>{ e.currentTarget.style.background='#1ca3ec'; e.currentTarget.style.transform='translateY(-2px)'; }}
+          onMouseLeave={e=>{ e.currentTarget.style.background='#0a2e4a'; e.currentTarget.style.transform='translateY(0)'; }}
+        >
+          โหลดเกมจาก…
+        </a>
       </header>
 
-      {/* Main content */}
-      <main style={{display:'flex', justifyContent:'center', alignItems:'start', gap:'40px', padding:'20px'}}>
+      {/* Main Content */}
+      <main style={{display:'flex', justifyContent:'center', alignItems:'start', gap:'50px', padding:'20px', flexWrap:'wrap'}}>
         {/* Tabs */}
-        <div style={{flex:'0 0 200px', display:'flex', flexDirection:'column', gap:'12px'}}>
+        <div style={{flex:'0 0 200px', display:'flex', flexDirection:'column', gap:'15px'}}>
           {Object.keys(TOOLS).map(t=>(
             <button key={t} onClick={()=>setTab(t)} style={{
-              padding:'12px', borderRadius:'12px', border:'none',
+              padding:'12px', borderRadius:'15px', border:'none',
               background: tab===t?'#0a2e4a':'#1ca3ec',
-              color:'#fff', cursor:'pointer', transition:'0.3s'
+              color:'#fff', fontWeight:'700', cursor:'pointer',
+              boxShadow: tab===t?'0 0 15px #0af0ff':'0 0 10px rgba(0,0,0,0.3)',
+              transition:'all 0.3s ease'
             }}>{t}</button>
           ))}
         </div>
 
         {/* Text */}
-        <div style={{maxWidth:'400px', color:'#000000ff', transition:'all 0.4s ease'}}>
-          <h2 style={{marginBottom:'8px'}}>{tab}</h2>
-          <p>{current.text}</p>
+        <div style={{maxWidth:'400px', color:'#ffffff', transition:'all 0.4s ease'}}>
+          <h2 style={{marginBottom:'10px', fontSize:'1.8rem', textShadow:'0 0 10px #0af0ff'}}>{tab}</h2>
+          <p style={{lineHeight:'1.6', fontSize:'1.1rem'}}>{current.text}</p>
         </div>
 
-        {/* Image */}
+        {/* Image Card */}
         <div style={{
-          flex:'0 0 300px', borderRadius:'12px', overflow:'hidden',
-          background:'rgba(0,0,0,0.4)', boxShadow:'0 0 20px rgba(0,0,0,0.7)',
+          flex:'0 0 320px', borderRadius:'15px', overflow:'hidden',
+          background:'rgba(0,0,0,0.3)', boxShadow:'0 0 25px rgba(0,240,255,0.5)',
           transition:'all 0.4s ease'
         }}>
           <Image
-            key={tab} // เพื่อ trigger fade-in เมื่อเปลี่ยน tab
+            key={tab}
             src={current.img}
             alt={tab}
-            width={300}
-            height={200}
+            width={320}
+            height={220}
             style={{
               objectFit:'cover',
-              borderRadius:'12px',
-              filter:'brightness(1.2) contrast(1.2)',
+              borderRadius:'15px',
+              filter:'brightness(1.3) contrast(1.2)',
               transition:'all 0.4s ease'
             }}
           />
