@@ -47,9 +47,9 @@ export default function RegisterPage(){
 
       <section className="container">
         <header className="auth-head">
-          <div className="auth-brand">ARKNIGHTS: <span>ENDFIELD</span></div>
+          <div className="auth-brand">SUB <span>NAUTICA</span></div>
           <h1 className="auth-title">Create Account</h1>
-          <p className="auth-sub">ลงทะเบียนผู้ปฏิบัติการใหม่</p>
+          <p className="auth-sub">ลงทะเบียน ผู้ดำดิ่งสู่ทะเลโลกอันมืดมิด</p>
         </header>
 
         <form className="auth-card fade-in-up" onSubmit={handleSubmit}>

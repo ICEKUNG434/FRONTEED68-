@@ -10,9 +10,9 @@ export default function SubnauticaUI() {
   const [tab, setTab] = useState('Dive');
 
   const TOOLS = {
-    Dive: { text:'สำรวจโลกใต้น้ำ ค้นหาสิ่งแปลกใหม่', img:'./images/Seaglide.jpg' },
-    Scan: { text:'วิเคราะห์สิ่งแวดล้อมและสิ่งมีชีวิต', img:'./images/Scanner.jpg' },
-    Harvest: { text:'เก็บทรัพยากรและวัตถุดิบสำคัญ', img:'./images/Ic_LimestoneChunk_22743.jpg' },
+    Dive: { text:'สำรวจโลกใต้น้ำ ค้นหาสิ่งแปลกใหม่', img:'/images/Seaglide.jpg' },
+    Scan: { text:'วิเคราะห์สิ่งแวดล้อมและสิ่งมีชีวิต', img:'/images/Scanner.jpg' },
+    Harvest: { text:'เก็บทรัพยากรและวัตถุดิบสำคัญ', img:'/images/Ic_LimestoneChunk_22743.jpg' },
     Return: { text:'กลับฐานและอัปเกรดอุปกรณ์', img:'./images/Scanner_Room.jpg' },
   };
 

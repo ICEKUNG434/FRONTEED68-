@@ -45,9 +45,9 @@ export default function LoginPage(){
 
       <section className="container">
         <header className="auth-head">
-          <div className="auth-brand">ARKNIGHTS: <span>ENDFIELD</span></div>
+          <div className="auth-brand">SUB <span>NAUTICA</span></div>
           <h1 className="auth-title">Sign In</h1>
-          <p className="auth-sub">ยืนยันตัวตนเพื่อเข้าควบคุมการปฏิบัติการบน Talos-II</p>
+          <p className="auth-sub">ยืนยันตัวตนเพื่อเข้าร่วมดาวเคราะห์ 4546B</p>
         </header>
 
         <form className="auth-card fade-in-up" onSubmit={handleLogin}>

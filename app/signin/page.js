@@ -46,7 +46,7 @@ export default function SignInPage(){
 
       <section className="container">
         <header className="auth-head">
-          <div className="auth-brand">ARKNIGHTS: <span>ENDFIELD</span></div>
+          <div className="auth-brand">SUB <span>NAUTICA</span></div>
           <h1 className="auth-title">Sign In</h1>
           <p className="auth-sub">เข้าสู่ระบบบัญชีของคุณ</p>
         </header>
