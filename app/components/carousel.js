@@ -7,20 +7,20 @@ export default function EndfieldCarousel() {
     { 
        id: 1,
       title: 'Safe Shallows',
-      image: '.public/images/sliders/SafeShallowsTrue.jpg',
-      thumb: '.public/images/sliders/SafeShallowsTrue.jpg',
+      image: '/images/sliders/SafeShallowsTrue.jpg',
+      thumb: '/images/sliders/SafeShallowsTrue.jpg',
     },
     {
       id: 2,
       title: 'Bulb Zone',
-      image: '.public/images/sliders/BulbZoneTrue.jpg',
-      thumb: '.public/images/sliders/BulbZoneTrue.jpg',
+      image: '/images/sliders/BulbZoneTrue.jpg',
+      thumb: '/images/sliders/BulbZoneTrue.jpg',
     },
     {
        id: 3,
       title: 'KelpForestTrue',
-      image: '.public/images/sliders/KelpForestTrue.jpg',
-      thumb: '.public/images/sliders/KelpForestTrue.jpg',
+      image: '/images/sliders/KelpForestTrue.jpg',
+      thumb: '/images/sliders/KelpForestTrue.jpg',
     },
   ]), []);
 
