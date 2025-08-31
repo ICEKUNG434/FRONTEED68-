@@ -130,7 +130,7 @@ export default function Navigation() {
               <span className="ms-2 d-none d-xl-inline">Sign Out</span>
             </button>
           )}
-        </div> 
+        </div>
       </div>
 
       <button
