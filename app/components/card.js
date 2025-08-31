@@ -129,8 +129,8 @@ const OPS = [
     name:'Diver-01',
     faction:'Alterra Corp',
     race:'Human',
-    thumb:'/images/sliders/Dg851yp-a5e7660f-bc32-4500-ab31-71210bb64d84.jpg',
-    hero:'/images/sliders/Subnautica_Character.JPG.jpg', 
+    thumb:'./images/sliders/Dg851yp-a5e7660f-bc32-4500-ab31-71210bb64d84.jpg',
+    hero:'./images/sliders/Subnautica_Character.JPG.jpg', 
     desc:[
       'A brave explorer diving deep into the unknown seas.',
       'Equipped with standard survival suit and Seaglide for fast travel.'
@@ -141,8 +141,8 @@ const OPS = [
     name:'Leviathan',
     faction:'Deep Ocean',
     race:'Unknown',
-    thumb:'/images/sliders/Reaper_Leviathan_Fauna.jpg',
-    hero:'/images/sliders/Reaper_Leviathan.jpg',
+    thumb:'./images/sliders/Reaper_Leviathan_Fauna.jpg',
+    hero:'./images/sliders/Reaper_Leviathan.jpg',
     desc:[
       'Terrifying predator dwelling in the abyss.',
       'Its roar shakes the oceans, warning all who trespass.'
